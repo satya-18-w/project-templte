@@ -1,26 +1,25 @@
 import sys
-import os
 
 
-
-def error_message_detail(error,error_detail: sys):
-    
-    _,_,exc_tb=error_detail.exc_info()
-    filename=exc_tb.tb_frame.f_code.co_filename # it will tell konsa file main error a raha hai
-    error_message=f"error occured and the file name is {filename} and the line number is {exc_tb.tb_lineno} and error is {str(error)}"
-    return error_message
-    
-    
-    
-class SensorException(Exception):
-    def __init__(self,error_message,error_detail:sys):
+class customexception(Exception):
+    def __init__(self,error_message,error_details:sys):
+        self.error_message = error_message
+        _,_,exc_tb = error_details.exc_info()
         
-        super().__init__(error_message)
-        
-        self.error_message=error_message_detail(error_message,error_detail=error_detail)
-        
-        
+        self.lineno=exc_tb.tb_lineno
+        self.file_name=exc_tb.tb_frame.f_code.co_filename 
+    
     def __str__(self):
-        return self.error_message
+        return "Error occured in python script name [{0}] line number [{1}] error message [{2}]".format(
+        self.file_name, self.lineno, str(self.error_message))
+        
+        
     
+
+if __name__ == "__main__":
+    try:
+        
+        a=1/0
     
+    except Exception as e:
+        raise customexception(e,sys)
